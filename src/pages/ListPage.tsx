@@ -1,91 +1,47 @@
+import { Suspense, useMemo, useState } from 'react';
+import { fetchReservations } from '../api/fetchReservations';
+import ReservationList from '../components/ReservationList';
+import ErrorBoundary from '../components/ErrorBoundary';
 import Button from '../components/ui/Button';
-import Input from '../components/ui/Input';
-import Badge from '../components/ui/Badge';
-import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/Card';
-import { Table, Tbody, Td, Th, Thead, Tr } from '../components/ui/Table';
+import ReservationsSkeleton from '../components/ui/ReservationsSkeleton';
 
-type Reservation = {
-  id: string;
-  guest: string;
-  date: string; // ISO date string
-  status: 'confirmed' | 'pending' | 'canceled';
-};
-
-const sample: Reservation[] = [
-  { id: 'R-1001', guest: 'Jane Doe', date: '2025-09-10', status: 'confirmed' },
-  { id: 'R-1002', guest: 'John Smith', date: '2025-09-12', status: 'pending' },
-  { id: 'R-1003', guest: 'Alice Johnson', date: '2025-09-15', status: 'canceled' },
-];
-
-function initials(name: string) {
-  return name
-    .split(' ')
-    .map((p) => p[0])
-    .join('')
-    .slice(0, 2)
-    .toUpperCase();
+function ListError({ error, onReset }: { error: Error; onReset(): void }) {
+  return (
+    <div className="rounded-lg border border-slate-200 dark:border-slate-800 bg-white/80 dark:bg-slate-900/60 p-4">
+      <h2 className="text-lg font-semibold text-red-600 dark:text-red-400">
+        Failed to load reservations
+      </h2>
+      <p className="mt-2 text-sm text-slate-600 dark:text-slate-300">
+        {String(error.message ?? error)}
+      </p>
+      <div className="mt-3 flex gap-2">
+        <Button variant="outline" onClick={onReset}>
+          Try again
+        </Button>
+      </div>
+    </div>
+  );
 }
 
 export default function ListPage() {
+  const [version, setVersion] = useState(0);
+  const listPromise = useMemo(fetchReservations, [version]);
+
+  function onReset() {
+    setVersion((v) => v + 1);
+  }
+
   return (
-    <Card>
-      <CardHeader className="flex items-center gap-3">
-        <div className="mr-auto">
-          <CardTitle>Reservations</CardTitle>
-          <p className="text-sm text-slate-600 dark:text-slate-400">Manage upcoming bookings and status</p>
-        </div>
-        <div className="flex items-center gap-2 w-80 max-w-full">
-          <Input placeholder="Search by guest or id…" />
-          <Button variant="outline">Filter</Button>
-          <Button>New</Button>
-        </div>
-      </CardHeader>
-      <CardContent>
-        <Table>
-          <Thead>
-            <Tr>
-              <Th>ID</Th>
-              <Th>Guest</Th>
-              <Th>Date</Th>
-              <Th>Status</Th>
-              <Th className="text-right">Actions</Th>
-            </Tr>
-          </Thead>
-          <Tbody>
-            {sample.map((r) => (
-              <Tr key={r.id}>
-                <Td className="font-medium">{r.id}</Td>
-                <Td>
-                  <div className="flex items-center gap-3">
-                    <span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-sky-500 to-indigo-600 text-white text-xs">
-                      {initials(r.guest)}
-                    </span>
-                    <span>{r.guest}</span>
-                  </div>
-                </Td>
-                <Td>{new Date(r.date).toLocaleDateString()}</Td>
-                <Td>
-                  <Badge
-                    variant={
-                      r.status === 'confirmed'
-                        ? 'success'
-                        : r.status === 'pending'
-                        ? 'warning'
-                        : 'danger'
-                    }
-                  >
-                    {r.status}
-                  </Badge>
-                </Td>
-                <Td className="text-right">
-                  <Button variant="ghost" size="sm" className="mr-1">View</Button>
-                  <Button variant="outline" size="sm">Edit</Button>
-                </Td>
-              </Tr>
-            ))}
-          </Tbody>
-        </Table>
-      </CardContent>
-    </Card>
+    <ErrorBoundary
+      resetKeys={[version]}
+      onReset={onReset}
+      fallback={({ error, reset }) => (
+        <ListError error={error} onReset={reset} />
+      )}
+    >
+      <Suspense fallback={<ReservationsSkeleton />}>
+        <ReservationList promise={listPromise} />
+      </Suspense>
+    </ErrorBoundary>
   );
 }
