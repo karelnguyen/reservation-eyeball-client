@@ -1,13 +1,13 @@
 import { useMemo, useState } from 'react';
 import { Link, Outlet, useRouterState } from '@tanstack/react-router';
-import { fetchHealth } from './api/fetchHealth';
+import { getHealth } from './api/getHealth';
 
 import { HealthStatus } from './components/HealthStatus';
 
 function App() {
   const [healthVersion] = useState(0);
   const location = useRouterState({ select: (s) => s.location });
-  const healthPromise = useMemo(fetchHealth, [healthVersion]);
+  const healthPromise = useMemo(getHealth, [healthVersion]);
 
   const activeIndex = location.pathname === '/form' ? 1 : 0;
 

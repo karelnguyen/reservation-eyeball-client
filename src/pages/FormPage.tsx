@@ -1,41 +1,93 @@
-import { useState } from 'react';
+import { useActionState, useMemo } from 'react';
+import Input from '../components/ui/Input';
+import Button from '../components/ui/Button';
+import {
+  createReservationAction,
+  type CreateState,
+} from '../api/createReservation';
 
 export default function FormPage() {
-  const [name, setName] = useState('');
-  const [date, setDate] = useState('');
+  const [state, formAction, pending] = useActionState<CreateState, FormData>(
+    createReservationAction,
+    { ok: null, message: '' }
+  );
+
+  const activationDate = useMemo(
+    () =>
+      state.data
+        ? new Date(new Date(state.data.activeFrom).getTime() - 15 * 60 * 1000)
+        : null,
+    [state.data]
+  );
 
   return (
     <section className="rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-4 shadow-sm">
-      <h2 className="text-xl font-semibold">Form</h2>
-      <p className="text-sm text-slate-600 dark:text-slate-300">This is the form page.</p>
-      <form onSubmit={(e) => e.preventDefault()} className="mt-3 space-y-3">
+      <h2 className="text-xl font-semibold">Make a Reservation</h2>
+      <p className="text-sm text-slate-600 dark:text-slate-300">
+        Submit your details. Your PIN activates 15 minutes before your time.
+      </p>
+      <form action={formAction} className="mt-4 grid gap-3 sm:grid-cols-2">
         <div className="grid gap-1">
-          <label className="text-sm" htmlFor="name">Name</label>
-          <input
-            id="name"
-            className="rounded-md border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-slate-400/60"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            placeholder="Jane Doe"
-          />
+          <label className="text-sm" htmlFor="firstName">
+            First Name
+          </label>
+          <Input id="firstName" name="firstName" placeholder="Jane" required />
         </div>
         <div className="grid gap-1">
-          <label className="text-sm" htmlFor="date">Date</label>
-          <input
-            id="date"
-            type="date"
-            className="rounded-md border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-slate-400/60"
-            value={date}
-            onChange={(e) => setDate(e.target.value)}
+          <label className="text-sm" htmlFor="lastName">
+            Last Name
+          </label>
+          <Input id="lastName" name="lastName" placeholder="Doe" required />
+        </div>
+        <div className="grid gap-1 sm:col-span-2">
+          <label className="text-sm" htmlFor="phone">
+            Phone Number
+          </label>
+          <Input
+            id="phone"
+            name="phone"
+            type="tel"
+            placeholder="555-123-4567"
+            required
           />
         </div>
-        <button
-          type="submit"
-          className="inline-flex items-center rounded-md bg-slate-900 text-white dark:bg-slate-100 dark:text-slate-900 px-3 py-2 text-sm hover:opacity-90"
-        >
-          Submit
-        </button>
+        <div className="grid gap-1 sm:col-span-2">
+          <label className="text-sm" htmlFor="scheduledAt">
+            Time of Reservation
+          </label>
+          <Input
+            id="scheduledAt"
+            name="scheduledAt"
+            type="datetime-local"
+            required
+          />
+        </div>
+        <div className="sm:col-span-2">
+          <Button type="submit" disabled={pending}>
+            {pending ? 'Submitting…' : 'Get PIN'}
+          </Button>
+          {state.ok === false && state.message && (
+            <span className="ml-3 text-sm text-rose-600">{state.message}</span>
+          )}
+        </div>
       </form>
+
+      {state.ok && state.data && !pending && (
+        <div className="mt-6 rounded-md border border-slate-200 dark:border-slate-700 p-4 bg-white/80 dark:bg-slate-900/60">
+          <h3 className="text-lg font-medium">Reservation Created</h3>
+          <p className="mt-1 text-sm text-slate-600 dark:text-slate-300">
+            Your PIN is{' '}
+            <span className="font-mono text-base text-green-600">
+              {state.data.pin}
+            </span>
+            .
+          </p>
+          <p className="text-sm text-slate-600 dark:text-slate-300">
+            It activates at <strong>{activationDate?.toLocaleString()}</strong>{' '}
+            and remains valid during your window.
+          </p>
+        </div>
+      )}
     </section>
   );
 }

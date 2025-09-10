@@ -4,39 +4,13 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <!-- Theme color for light/dark address bar -->
-    <meta
-      name="theme-color"
-      content="#f8fafc"
-      media="(prefers-color-scheme: light)"
-    />
-    <meta
-      name="theme-color"
-      content="#0f172a"
-      media="(prefers-color-scheme: dark)"
-    />
+    <!-- Single dark theme color for address bar -->
+    <meta name="theme-color" content="#0f172a" />
 
-    <!-- Prevent white flash: set background immediately + apply saved theme early -->
+    <!-- Always use dark background; keep full-height -->
     <style>
-      /* Light default matches Tailwind slate-50; dark matches slate-950 */
-      html {
-        background-color: #f8fafc;
-        color-scheme: light dark;
-      }
-      @media (prefers-color-scheme: dark) {
-        html {
-          background-color: #0f172a;
-        }
-      }
-      html.dark {
-        background-color: #0f172a;
-      }
-      /* Ensure full-height to cover screen before app mounts */
-      html,
-      body,
-      #root {
-        height: 100%;
-      }
+      html { background-color: #0f172a; color-scheme: dark; }
+      html, body, #root { height: 100%; }
     </style>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />

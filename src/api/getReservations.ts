@@ -1,4 +1,5 @@
 import { API_BASE_URL } from '../config';
+import { readErrorMessage } from '../utils';
 
 export type Reservation = {
   id: string;
@@ -12,13 +13,18 @@ export type Reservation = {
   createdAt: string;
 };
 
-export async function fetchReservations(
+export async function getReservations(
   signal?: AbortSignal
 ): Promise<Reservation[]> {
-  const url = `${API_BASE_URL}/api/reservations`;
-  const res = await fetch(url, { signal });
+  const res = await fetch(`${API_BASE_URL}/api/reservations`, { signal });
+
   if (!res.ok) {
-    throw new Error(`Error fetching reservations`);
+    const msg = await readErrorMessage(
+      res,
+      `Error fetching reservations (${res.status})`
+    );
+    throw new Error(msg);
   }
+
   return res.json();
 }

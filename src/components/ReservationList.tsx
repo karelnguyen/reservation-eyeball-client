@@ -2,7 +2,7 @@ import { use } from 'react';
 import Badge from './ui/Badge';
 import { Card, CardHeader, CardTitle, CardContent } from './ui/Card';
 import { Table, Thead, Tr, Th, Tbody, Td } from './ui/Table';
-import type { Reservation } from '../api/fetchReservations';
+import type { Reservation } from '../api/getReservations';
 
 function initials(first?: string, last?: string) {
   const name = `${first ?? ''} ${last ?? ''}`.trim();
@@ -16,16 +16,12 @@ function initials(first?: string, last?: string) {
 }
 function badgeVariant(status?: string) {
   switch ((status ?? '').toLowerCase()) {
-    case 'booked':
     case 'confirmed':
-      return 'success' as const;
-    case 'pending':
-      return 'warning' as const;
-    case 'canceled':
-    case 'cancelled':
-      return 'danger' as const;
+      return 'success';
+    case 'booked':
+      return 'warning';
     default:
-      return 'default' as const;
+      return 'warning';
   }
 }
 
