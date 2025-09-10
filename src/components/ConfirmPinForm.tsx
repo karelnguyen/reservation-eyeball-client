@@ -33,7 +33,7 @@ export default function ConfirmPinForm({
         {state.message && (
           <span
             className={
-              'text-sm ml-2 ' +
+              'text-sm ml-2 capitalize ' +
               (state.ok === true
                 ? 'text-emerald-600'
                 : state.ok === false

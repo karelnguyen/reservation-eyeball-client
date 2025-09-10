@@ -71,7 +71,9 @@ export default function FormPage() {
             {pending ? 'Submitting…' : 'Get PIN'}
           </Button>
           {state.ok === false && state.message && (
-            <span className="ml-3 text-sm text-rose-600">{state.message}</span>
+            <span className="ml-3 text-sm text-rose-600 capitalize">
+              {state.message}
+            </span>
           )}
         </div>
       </form>

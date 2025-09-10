@@ -43,8 +43,7 @@ export const confirmPinAction =
 
       return { ok: !!result.ok, message: result.message };
     } catch (e: unknown) {
-      const message =
-        e instanceof Error ? e.message : 'Failed to create reservation';
+      const message = e instanceof Error ? e.message : 'Failed to confirm pin';
       return { ok: false, message };
     }
   };
