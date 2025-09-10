@@ -26,10 +26,11 @@ export default class ErrorBoundary extends React.Component<
     this.props.onError?.(error, info);
   }
 
-  reset() {
-    this.state = { error: null };
+  // Bind as class field to preserve `this` when passed as a callback
+  reset = () => {
+    this.setState({ error: null });
     this.props.onReset?.();
-  }
+  };
 
   render() {
     const { error } = this.state;
