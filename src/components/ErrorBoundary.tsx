@@ -27,7 +27,7 @@ export default class ErrorBoundary extends React.Component<
   }
 
   reset() {
-    this.setState({ error: null });
+    this.state = { error: null };
     this.props.onReset?.();
   }
 
