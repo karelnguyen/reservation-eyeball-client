@@ -6,6 +6,8 @@ import {
   type CreateState,
 } from '../api/createReservation';
 
+const toDate = (date?: string | null) => (date ? new Date(date) : null);
+
 export default function FormPage() {
   const [state, formAction, pending] = useActionState<CreateState, FormData>(
     createReservationAction,
@@ -13,10 +15,12 @@ export default function FormPage() {
   );
 
   const activationDate = useMemo(
-    () =>
-      state.data
-        ? new Date(new Date(state.data.activeFrom).getTime() - 15 * 60 * 1000)
-        : null,
+    () => (state.data ? toDate(state.data.activeFrom) : null),
+    [state.data]
+  );
+
+  const expiryDate = useMemo(
+    () => (state.data ? toDate(state.data.nominalExpiry) : null),
     [state.data]
   );
 
@@ -83,8 +87,8 @@ export default function FormPage() {
             .
           </p>
           <p className="text-sm text-slate-600 dark:text-slate-300">
-            It activates at <strong>{activationDate?.toLocaleString()}</strong>{' '}
-            and remains valid during your window.
+            Valid from <strong>{activationDate?.toLocaleString()}</strong> until{' '}
+            <strong>{expiryDate?.toLocaleString()}</strong>.
           </p>
         </div>
       )}

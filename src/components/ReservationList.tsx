@@ -3,27 +3,7 @@ import Badge from './ui/Badge';
 import { Card, CardHeader, CardTitle, CardContent } from './ui/Card';
 import { Table, Thead, Tr, Th, Tbody, Td } from './ui/Table';
 import type { Reservation } from '../api/getReservations';
-
-function initials(first?: string, last?: string) {
-  const name = `${first ?? ''} ${last ?? ''}`.trim();
-  if (!name) return '–';
-  return name
-    .split(/\s+/)
-    .map((p) => p[0])
-    .join('')
-    .slice(0, 2)
-    .toUpperCase();
-}
-function badgeVariant(status?: string) {
-  switch ((status ?? '').toLowerCase()) {
-    case 'confirmed':
-      return 'success';
-    case 'booked':
-      return 'warning';
-    default:
-      return 'warning';
-  }
-}
+import { initials, badgeVariant } from '../utils';
 
 export default function ReservationList({
   promise,

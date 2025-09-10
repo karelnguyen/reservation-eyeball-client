@@ -15,6 +15,7 @@ export type CreateReservationResult = {
   phone: string;
   pin: string;
   activeFrom: string;
+  nominalExpiry: string;
   status: string;
 };
 

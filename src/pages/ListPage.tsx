@@ -14,6 +14,11 @@ export default function ListPage() {
     setVersion((v) => v + 1);
   }
 
+  function onConfirmSuccess() {
+    onReset();
+    alert('Confirmation success');
+  }
+
   return (
     <ErrorBoundary
       resetKeys={[version]}
@@ -23,7 +28,7 @@ export default function ListPage() {
       )}
     >
       <div className="mb-4">
-        <ConfirmPinForm onSuccess={onReset} />
+        <ConfirmPinForm onSuccess={onConfirmSuccess} />
       </div>
       <Suspense fallback={<ReservationsSkeleton />}>
         <ReservationList promise={listPromise} />

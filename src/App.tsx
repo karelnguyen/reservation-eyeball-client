@@ -1,15 +1,15 @@
-import { useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { Link, Outlet, useRouterState } from '@tanstack/react-router';
 import { getHealth } from './api/getHealth';
-
 import { HealthStatus } from './components/HealthStatus';
 
 function App() {
-  const [healthVersion] = useState(0);
   const location = useRouterState({ select: (s) => s.location });
-  const healthPromise = useMemo(getHealth, [healthVersion]);
-
-  const activeIndex = location.pathname === '/form' ? 1 : 0;
+  const healthPromise = useMemo(getHealth, []);
+  const activeIndex = useMemo(
+    () => (location.pathname === '/form' ? 1 : 0),
+    [location.pathname]
+  );
 
   return (
     <div className="min-h-screen relative bg-gradient-to-b from-slate-50 to-white dark:from-slate-950 dark:to-slate-900">

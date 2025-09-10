@@ -5,13 +5,11 @@ export default function ApiStatus({
   promise,
   endpoint,
 }: {
-  promise: Promise<unknown>;
+  promise: Promise<{ ok: boolean }>;
   endpoint: string;
 }) {
-  use(promise);
-
-  const title = `API: healthy — ${endpoint}`;
-
+  const data = use(promise);
+  const title = `API ok: ${data.ok} — ${endpoint}`;
   return (
     <Tooltip label={title}>
       <span

@@ -13,10 +13,8 @@ export type Reservation = {
   createdAt: string;
 };
 
-export async function getReservations(
-  signal?: AbortSignal
-): Promise<Reservation[]> {
-  const res = await fetch(`${API_BASE_URL}/api/reservations`, { signal });
+export async function getReservations(): Promise<Reservation[]> {
+  const res = await fetch(`${API_BASE_URL}/api/reservations`);
 
   if (!res.ok) {
     const msg = await readErrorMessage(
